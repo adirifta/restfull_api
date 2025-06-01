@@ -71,7 +71,6 @@ const createArticle = async (req, res) => {
         return res.status(400).json({ msg: "Content is too long" });
     }
 
-    // Dapatkan user ID dari token (middleware protect)
     const authorId = req.user.id;
     
     const file = req.files.file;
@@ -162,7 +161,6 @@ const updateArticle = async (req, res) => {
 
         const article = articleRows[0];
         
-        // Cek authorization (hanya penulis yang membuat artikel atau admin)
         if (article.author_id !== req.user.id && req.user.role !== 'admin') {
             return res.status(403).json({ 
                 message: 'Not authorized to update this article' 
@@ -179,7 +177,6 @@ const updateArticle = async (req, res) => {
             const fileName = `${file.md5}${ext}`;
             const newUrl = `images/${fileName}`;
 
-            // Validasi file gambar
             if (!['.png', '.jpg', '.jpeg'].includes(ext)) {
                 return res.status(422).json({ msg: "Invalid Image. Only PNG, JPG, and JPEG are allowed" });
             }
@@ -190,7 +187,6 @@ const updateArticle = async (req, res) => {
                 return res.status(400).json({ msg: "File name is too long" });
             }
 
-            // Upload file baru
             await file.mv(`./public/${newUrl}`);
             imageUrl = newUrl;
         }
@@ -207,7 +203,6 @@ const updateArticle = async (req, res) => {
             });
         }
 
-        // Log activity
         console.log(`User ${req.user.id} updated article ${id}`);
         
         res.status(200).json({ 
@@ -237,7 +232,6 @@ const updateArticle = async (req, res) => {
 const deleteArticle = async (req, res) => {
     const { id } = req.params;
     try {
-        // Cek artikel exist
         const [articleRows] = await db.execute('SELECT * FROM articles WHERE id = ?', [id]);
         if (articleRows.length === 0) {
             return res.status(404).json({ message: 'Article not found' });
@@ -245,8 +239,8 @@ const deleteArticle = async (req, res) => {
 
         const article = articleRows[0];
         
-        // Cek authorization (hanya penulis yang membuat artikel atau admin)
-        if (article.author_id !== req.user.id) {
+
+        if (article.author_id !== req.user.id && req.user.role !== 'admin') {
             return res.status(403).json({ 
                 message: 'Not authorized to delete this article' 
             });
@@ -256,7 +250,6 @@ const deleteArticle = async (req, res) => {
 
         const [result] = await db.execute('DELETE FROM articles WHERE id = ?', [id]);
         
-        // Hapus gambar terkait
         if (imageUrl) {
             fs.unlink(path.join(__dirname, '..', 'public', imageUrl), (err) => {
                 if (err) console.error('Error deleting image:', err);

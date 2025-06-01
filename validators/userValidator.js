@@ -1,4 +1,4 @@
-const { body } = require('express-validator');
+const { body, validationResult } = require('express-validator');
 
 const createUserValidator = [
     body('name')
@@ -15,7 +15,15 @@ const createUserValidator = [
     
     body('status')
         .optional()
-        .isIn(['penulis', 'pembaca']).withMessage('Status harus penulis atau pembaca')
+        .isIn(['penulis', 'pembaca']).withMessage('Status harus penulis atau pembaca'),
+
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ success: false, errors: errors.array() });
+        }
+        next();
+    }
 ];
 
 const updateUserValidator = [

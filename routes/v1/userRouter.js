@@ -6,11 +6,9 @@ const {
     createUser,
     updateUser,
     deleteUser
-} = require('../controllers/userController');
-const { protect, authorize } = require('../middleware/authMiddleware');
-const { createUserValidator, updateUserValidator } = require('../validators/userValidator');
-
-
+} = require('../../controllers/v1/userController');
+const { protect, authorize } = require('../../middleware/authMiddleware');
+const { createUserValidator, updateUserValidator } = require('../../validators/userValidator');
 
 router.get('/users', protect, authorize('admin'), getAllUsers);
 router.post('/users', protect, authorize('admin'), createUserValidator, createUser);

@@ -3,17 +3,15 @@ const { validationResult } = require('express-validator');
 
 // Membuat komentar baru (harus login)
 const createComment = async (req, res) => {
-    // Validasi input
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
 
     const { article_id, content } = req.body;
-    const user_id = req.user.id; // Diambil dari token
+    const user_id = req.user.id;
 
     try {
-        // Validasi artikel exist
         const [article] = await db.execute('SELECT id FROM articles WHERE id = ?', [article_id]);
         if (article.length === 0) {
             return res.status(404).json({ 
@@ -22,7 +20,6 @@ const createComment = async (req, res) => {
             });
         }
 
-        // Validasi content tidak kosong
         if (!content || content.trim().length === 0) {
             return res.status(400).json({
                 success: false,
@@ -30,7 +27,6 @@ const createComment = async (req, res) => {
             });
         }
 
-        // Validasi panjang content
         if (content.length > 1000) {
             return res.status(400).json({
                 success: false,
@@ -43,7 +39,6 @@ const createComment = async (req, res) => {
             [article_id, user_id, content.trim()]
         );
 
-        // Ambil data komentar yang baru dibuat beserta info user
         const [newComment] = await db.execute(`
             SELECT c.*, u.name as user_name, u.avatar as user_avatar, u.status as user_status
             FROM comments c
@@ -87,7 +82,6 @@ const getCommentsByArticle = async (req, res) => {
     const { article_id } = req.params;
 
     try {
-        // Validasi artikel exist
         const [article] = await db.execute('SELECT id FROM articles WHERE id = ?', [article_id]);
         if (article.length === 0) {
             return res.status(404).json({ 
@@ -134,7 +128,6 @@ const getCommentsByArticle = async (req, res) => {
 
 // Update komentar (harus login dan pemilik komentar)
 const updateComment = async (req, res) => {
-    // Validasi input
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -142,10 +135,9 @@ const updateComment = async (req, res) => {
 
     const { id } = req.params;
     const { content } = req.body;
-    const user_id = req.user.id; // Diambil dari token
+    const user_id = req.user.id;
 
     try {
-        // Validasi content tidak kosong
         if (!content || content.trim().length === 0) {
             return res.status(400).json({
                 success: false,
@@ -161,7 +153,6 @@ const updateComment = async (req, res) => {
             });
         }
 
-        // Cek komentar exist dan milik user
         const [comment] = await db.execute(
             'SELECT * FROM comments WHERE id = ?', 
             [id]
@@ -174,7 +165,6 @@ const updateComment = async (req, res) => {
             });
         }
 
-        // Cek apakah user adalah pemilik komentar
         if (comment[0].user_id !== user_id) {
             return res.status(403).json({ 
                 success: false,
@@ -187,7 +177,6 @@ const updateComment = async (req, res) => {
             [content.trim(), id]
         );
 
-        // Ambil data komentar yang sudah diupdate
         const [updatedComment] = await db.execute(`
             SELECT c.*, u.name as user_name, u.avatar as user_avatar, u.status as user_status
             FROM comments c
@@ -228,10 +217,9 @@ const updateComment = async (req, res) => {
 // Hapus komentar (harus login dan pemilik komentar)
 const deleteComment = async (req, res) => {
     const { id } = req.params;
-    const user_id = req.user.id; // Diambil dari token
+    const user_id = req.user.id;
 
     try {
-        // Cek komentar exist
         const [comment] = await db.execute(
             'SELECT * FROM comments WHERE id = ?', 
             [id]
@@ -244,7 +232,6 @@ const deleteComment = async (req, res) => {
             });
         }
 
-        // Cek apakah user adalah pemilik komentar
         if (comment[0].user_id !== user_id) {
             return res.status(403).json({ 
                 success: false,

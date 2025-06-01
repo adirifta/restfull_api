@@ -1,11 +1,13 @@
-const db = require('../config/db');
+const db = require('../../config/db');
 const path = require('path');
 const fs = require('fs');
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcrypt');
+const { plainToInstance } = require('class-transformer');
+const UserTransformer = require('../../transformers/UserTransformer');
 
 // Get all users (hanya admin)
-const getAllUsers = async (req, res) => {
+const getAllUsersV2 = async (req, res) => {
     try {
         // Cek jika user adalah admin
         if (req.user.status !== 'admin') {
@@ -37,49 +39,24 @@ const getAllUsers = async (req, res) => {
 };
 
 // Get user by ID (hanya admin atau user sendiri)
-const getUserById = async (req, res) => {
-    const { id } = req.params;
-    
+const getUserByIdV2 = async (req, res) => {
     try {
-        // Cek authorization (admin atau user sendiri)
-        if (req.user.id !== parseInt(id) && req.user.status !== 'admin') {
-            return res.status(403).json({ 
-                success: false,
-                message: 'Anda tidak memiliki akses ke data user ini' 
-            });
+        const [user] = await db.query('SELECT * FROM users WHERE id = ?', [req.params.id]);
+        
+        if (!user.length) {
+            return res.status(404).json({ success: false, message: 'User not found' });
         }
 
-        const [rows] = await db.execute(
-            'SELECT id, name, email, bio, avatar, status, created_at FROM users WHERE id = ?', 
-            [id]
-        );
-        
-        if (rows.length === 0) {
-            return res.status(404).json({ 
-                success: false,
-                message: 'User not found' 
-            });
-        }
-        
-        const user = rows[0];
-        // Add avatar URL if available
-        user.avatar = user.avatar ? `${req.protocol}://${req.get('host')}/${user.avatar}` : null;
-        
-        res.status(200).json({
-            success: true,
-            data: user
-        });
+        const transformedUser = UserTransformer.transform(user[0]);
+        res.json({ success: true, data: transformedUser });
     } catch (error) {
-        console.error('Error fetching user:', error);
-        res.status(500).json({ 
-            success: false,
-            message: 'Internal Server Error' 
-        });
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Server Error' });
     }
 };
 
 // Create a new user (hanya admin)
-const createUser = async (req, res) => {
+const createUserV2 = async (req, res) => {
     // Validasi input
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -167,7 +144,7 @@ const createUser = async (req, res) => {
 };
 
 // Update a user (hanya admin atau user sendiri)
-const updateUser = async (req, res) => {
+const updateUserV2 = async (req, res) => {
     // Validasi input
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -300,7 +277,7 @@ const updateUser = async (req, res) => {
 };
 
 // Delete a user (hanya admin)
-const deleteUser = async (req, res) => {
+const deleteUserV2 = async (req, res) => {
     const { id } = req.params;
     
     try {
@@ -360,9 +337,9 @@ const deleteUser = async (req, res) => {
 };
 
 module.exports = {
-    getAllUsers,
-    getUserById,
-    createUser,
-    updateUser,
-    deleteUser
+    getAllUsersV2,
+    getUserByIdV2,
+    createUserV2,
+    updateUserV2,
+    deleteUserV2
 };
