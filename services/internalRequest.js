@@ -2,18 +2,10 @@ const axios = require('axios');
 const https = require('https');
 require('dotenv').config();
 
-/**
- * Membuat internal request ke API lain di server yang sama.
- * @param {string} method - HTTP method (GET, POST, dll).
- * @param {string} path - Path endpoint (contoh: '/api/users').
- * @param {object} data - Data payload (untuk POST/PUT).
- * @param {object} headers - Header tambahan (opsional).
- * @returns {Promise<object>} - Response dari API internal.
- */
 const internalAxios = axios.create({
-  baseURL: `https://localhost:${process.env.PORT}`,
+  baseURL: `http://localhost:${process.env.PORT}`,
   httpsAgent: new https.Agent({  
-    rejectUnauthorized: false // Ignore self-signed cert errors
+    rejectUnauthorized: false
   })
 });
 

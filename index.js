@@ -30,7 +30,7 @@ app.use('/api', articleRoutes);
 app.use('/api/v1', require('./routes/v1/userRouter'));
 app.use('/api/v2', require('./routes/v2/userRouter'));
 app.use('/api', commentRoutes);
-app.use('/api/orders', require('./routes/orderRoutes'));
+app.use('/api/v2/orders', require('./routes/v2/orderRoutes'));
 
 // Error handling
 app.use(notFound);

@@ -1,15 +1,3 @@
-**Cara membuat Enkripsi (SSL/HTTPS) di local**
-
-- Masukkan di CLI git bash 'openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes -subj "//CN=localhost"'
-- Setelah berhasil generate, verifikasi dengan: 'openssl x509 -in cert.pem -text -noout'
-
-
-
-**Run**
-
-- nodemon server.js -
-
-
 # 🚀 Express.js RESTful API with Best Practices
 
 ![Express.js](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge&logo=express)
@@ -47,3 +35,48 @@ src/
 ├── validators/      # Validasi request
 ├── app.js           # Aplikasi utama
 └── server.js        # Entry point
+
+
+🛠️ Instalasi
+Clone repositori
+
+bash
+git clone https://github.com/username/project.git
+cd project
+Instal dependencies
+
+bash
+npm install
+Setup environment
+Buat file .env dan isi dengan:
+
+env
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=
+DB_NAME=express_api
+JWT_SECRET=rahasia_anda
+PORT=3000
+Jalankan server
+
+bash
+node server.js
+
+
+
+
+
+
+
+
+
+**Cara membuat Enkripsi (SSL/HTTPS) di local**
+
+- Masukkan di CLI git bash 'openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes -subj "//CN=localhost"'
+- Setelah berhasil generate, verifikasi dengan: 'openssl x509 -in cert.pem -text -noout'
+
+
+
+**Run**
+
+- nodemon server.js -
