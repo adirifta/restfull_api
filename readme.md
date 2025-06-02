@@ -35,22 +35,30 @@ src/
 ├── validators/      # Validasi request
 ├── app.js           # Aplikasi utama
 └── server.js        # Entry point
+```
+---
 
+## 🛠️ Instalasi
 
-🛠️ Instalasi
-Clone repositori
+# 1. Clone repositori
 
-bash
+```bash
 git clone https://github.com/username/project.git
 cd project
-Instal dependencies
+```
 
-bash
+# 2. Instal dependencies
+
+```bash
 npm install
-Setup environment
+```
+
+
+# 3. Setup environment
 Buat file .env dan isi dengan:
 
-env
+
+```env
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=
@@ -58,10 +66,13 @@ DB_NAME=express_api
 JWT_SECRET=rahasia_anda
 PORT=3000
 Jalankan server
+```
 
-bash
+# 4. Jalankan server
+
+``` bash
 node server.js
-
+```
 
 
 
