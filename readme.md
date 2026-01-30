@@ -83,9 +83,14 @@ node server.js
 
 **Cara membuat Enkripsi (SSL/HTTPS) di local**
 
-- Masukkan di CLI git bash 'openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes -subj "//CN=localhost"'
-- Setelah berhasil generate, verifikasi dengan: 'openssl x509 -in cert.pem -text -noout'
-
+- Masukkan di CLI git bash
+```bash
+openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes -subj "/CN=localhost"
+```
+- Setelah berhasil generate, verifikasi dengan:
+```bash
+openssl x509 -in cert.pem -text -noout'
+```
 
 
 **Run**
